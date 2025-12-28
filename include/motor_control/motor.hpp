@@ -48,6 +48,9 @@ class Motor {
         float speed() const;
         float motor_speed() const;
         void getState(pbio_passivity_t *state, int32_t *duty_now) const;
+        pbio_control_type_t getActuationStatus() const {
+            return _servo.control.type;
+        }
 
         void stop();
         void brake();

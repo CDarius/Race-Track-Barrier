@@ -2,7 +2,8 @@
 
 #include <freertos/FreeRTOSConfig.h>
 
-#define AP_MODE
+//#defin ENABLE_API_SERVER_LOGGING
+//#define AP_MODE
 
 #ifdef AP_MODE
     #define IP_ADDRESS    192, 168, 0, 1  

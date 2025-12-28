@@ -14,10 +14,6 @@ struct stall_homing_config_t : public base_homing_config_t {
     float minimum_travel; // Minimum required travel distance before hitting the switch (motor units)
 };
 
-struct gantry_stall_homing_config_t : public stall_homing_config_t {
-    float skew_pos_compensation; // Position correction to apply at the second motor to compensate the gantry skew (motor units)
-};
-
 class MotorWithStallReference : public IMotorHoming {
     private:
         bool _referenced = false;

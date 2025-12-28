@@ -4,25 +4,27 @@
 #include <Preferences.h>
 #include "settings_group.hpp"
 #include "motor_control/motor.hpp"
-#include "motor_control/motorwithreferenceswitch.hpp"
-#include "motor_control/motorwithstallreference.hpp"
+#include "motor_control/gantrymotor.hpp"
+#include "barrier_config.h"
 #include "axis/settings_axis_group.hpp"
-#include "axis_stall_homing/settings_axis_stall_homing_group.hpp"
+#include "barrier/settings_barrier_group.hpp"
 
 class Settings {
     private:
-        MotorWithStallReference& _X1Motor;
-        MotorWithStallReference& _X2Motor;
+        GantryMotor& _XMotor;
+        Motor& _X1Motor;
+        Motor& _X2Motor;
+        barrier_config_t& _barrierConfig;
 
         SettingsAxisGroup _xSettings = SettingsAxisGroup("x_axis", "X Axis", _X1Motor, _X2Motor);
-        SettingsAxisStallHomingGroup _xHomingSettings = SettingsAxisStallHomingGroup("x_axis_homing", "X Axis Homing", _X1Motor);
+        SettingsBarrierGroup _barrierSettings = SettingsBarrierGroup("barrier", "Barrier Settings", _barrierConfig);
 
-        SettingsGroup* _groups[2] = { &_xSettings, &_xHomingSettings };
+        SettingsGroup* _groups[2] = { &_xSettings, &_barrierSettings };
         uint16_t _groupsCount = sizeof(_groups) / sizeof(SettingsGroup*);
         
     public:
-        Settings(MotorWithStallReference& x1Motor, MotorWithStallReference& x2Motor) 
-            : _X1Motor(x1Motor), _X2Motor(x2Motor)
+        Settings(GantryMotor& xMotor, barrier_config_t& barrierConfig) 
+            : _XMotor(xMotor), _X1Motor(xMotor.motor1()), _X2Motor(xMotor.motor2()), _barrierConfig(barrierConfig)
         {            
         }
 

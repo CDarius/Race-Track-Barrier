@@ -1,37 +1,37 @@
 #pragma once
 
-#include "motor_control\motorwithstallreference.hpp"
+#include "barrier_config.h"
 #include "settings\setting.hpp"
 
-class AxisStallHomingHomeSkewCompensationSetting : public SettingFloat {
+class BarrierJogMultiplierSetting : public SettingFloat {
     private:
-        gantry_stall_homing_config_t& _config;
+        barrier_config_t& _config;
 
     public:
-        AxisStallHomingHomeSkewCompensationSetting(gantry_stall_homing_config_t& motorHoming) : _config(motorHoming) {}
+        BarrierJogMultiplierSetting(barrier_config_t& config) : _config(config) {}
 
         float getValue() const override {
-            return _config.skew_pos_compensation;
+            return _config.jog_multiplier;
         }
 
         void setValue(const float value) override {
-            _config.skew_pos_compensation = value;
+            _config.jog_multiplier = value;
         }
 
         const char* getName() const override {
-            return "skew_comp";
+            return "jog_multiplier";
         }
 
         const char* getTitle() const override {
-            return "Gantry skew compensation";
+            return "Manual homing jog multiplier";
         }
 
         const char* getDescription() const override {
-            return "Compensation for gantry skew after the homing";
+            return "Multiplier applied to the knob encoder during manual homing";
         }
 
         const char* getUnit() const override {
-            return "deg";
+            return "";
         }
 
         const bool hasMinValue() const override {
@@ -39,7 +39,7 @@ class AxisStallHomingHomeSkewCompensationSetting : public SettingFloat {
         }
 
         const float getMinValue() const override {
-            return -360.0;
+            return 1.0;
         }
 
         const bool hasMaxValue() const override {
@@ -47,7 +47,7 @@ class AxisStallHomingHomeSkewCompensationSetting : public SettingFloat {
         }
 
         const float getMaxValue() const override {
-            return 360.0;
+            return 10.0;
         }
 
         const bool hasChangeStep() const override {
@@ -55,6 +55,6 @@ class AxisStallHomingHomeSkewCompensationSetting : public SettingFloat {
         }
 
         const float getChangeStep() const override {
-            return 1.0;
+            return 0.1;
         }
     };

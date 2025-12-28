@@ -13,19 +13,17 @@ const char* WebFunctionAxisStepResponse::getDescription() const {
 }
 
 uint16_t WebFunctionAxisStepResponse::getPrerequisitesCount() const {
-    return 1;
+    // No prerequisites
+    return 0;
 }
 
 const char* WebFunctionAxisStepResponse::getPrerequisiteDescription(uint16_t index) const {
-    switch (index)
-    {
-    case 0: return "Axis must be homed";    
-    default: return nullptr;
-    }
+    // No prerequisites
+    return nullptr;
 }
 
 void WebFunctionAxisStepResponse::arePrerequisitesMet(bool* results) const {
-    results[0] = _axis.referenced();
+    // No prerequisites
 }
 
 WebFunctionExecutionStatus WebFunctionAxisStepResponse::start() {
@@ -72,7 +70,7 @@ WebFunctionExecutionStatus WebFunctionAxisStepResponse::start() {
         delay(20);
 
         // Start axis log and give a step move command towards plus sw limit
-        self->_axis.get_logger()->start(RUN_STEP_RESPONSE_LOG_DURATION_MS, 1);
+        self->_axis.motor1().get_logger()->start(RUN_STEP_RESPONSE_LOG_DURATION_MS, 1);
         delay(100); // Wait a bit to ensure the logger is started
         float target_position = sw_limit_plus - 4.0; // Stop 4 studs before the end of the travel
         self->_axis.track_target(target_position);
@@ -106,7 +104,7 @@ WebFunctionExecutionStatus WebFunctionAxisStepResponse::start() {
         }
 
         // Stop the log and release the axis
-        self->_axis.get_logger()->stop();
+        self->_axis.motor1().get_logger()->stop();
         self->_axis.stop();
 
         self->_status = WebFunctionExecutionStatus::Done;

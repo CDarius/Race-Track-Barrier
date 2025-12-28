@@ -3,27 +3,24 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "web_functions/web_function.hpp"
+#include "manual_home.hpp"
 #include "motor_control/gantrymotor.hpp"
-#include "motor_control/logger.hpp"
 #include "utils/task_runner.hpp"
 #include "utils/cancel_token.hpp"
 #include "utils/logger.hpp"
-#include "config.h"
-#include "monotonic.h"
 
-#define RUN_STEP_RESPONSE_LOG_DURATION_MS (20000)
-#define RUN_STEP_RESPONSE_SETTLE_TIME_MS (500)
-
-class WebFunctionAxisStepResponse : public WebFunction{
+class WebFunctionAxisHoming : public WebFunction{
 private:
     GantryMotor& _axis;
+    ManualHome& _manualHome;
     TaskRunner& _taskRunner;
     TaskHandle_t _taskHandle = nullptr;
     CancelToken* _cancelToken = nullptr;
-    
+
 public:
-    // Constructor that takes and stores an IMotorHoming reference
-    WebFunctionAxisStepResponse(GantryMotor& axis, TaskRunner& taskRunner) : _axis(axis), _taskRunner(taskRunner) {};
+    // Constructor that takes and stores an GantryMotor reference
+    WebFunctionAxisHoming(GantryMotor& axis, ManualHome& manualHome, TaskRunner& taskRunner) : 
+        _axis(axis), _manualHome(manualHome), _taskRunner(taskRunner) {};
 
     // Override methods as needed
     const char* getName() const override;

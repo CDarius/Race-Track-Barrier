@@ -38,8 +38,10 @@ void ApiRestServer::begin(Settings* settings, WebFunctions* webFunctions, Motor*
     _X2Motor = x2Motor;
 
     // Confifure logging to Serial
+    #ifdef ENABLE_API_SERVER_LOGGING
     _loggingMid.setOutput(Serial);
     _server.addMiddleware(&_loggingMid);
+    #endif
 
     // CORS headers
     DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");

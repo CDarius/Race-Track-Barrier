@@ -3,24 +3,29 @@
 #include "web_function_group.hpp"
 #include "axis/web_function_group_axis.hpp"
 #include "utils/task_runner.hpp"
+#include "motor_control/gantrymotor.hpp"
+#include "manual_home.hpp"
+#include "barrier_config.h"
+#include "devices/unit_encoder.hpp"
 #include "config.h"
 
 class WebFunctions {
     private:
         TaskRunner _taskRunner = TaskRunner("web_functions_task_runner", OTHER_TASK_HIGH_PRIORITY);
 
-        IMotorHoming& _X1Motor;
-        IMotorHoming& _X2Motor;
+        GantryMotor& _XMotor;
+        ManualHome& _manualHome;
+        UnitEncoder& _knob_encoder;
+        const barrier_config_t& barrier_config;
         
-        WebFunctionGroupAxis _x1AxisGroup = WebFunctionGroupAxis("x1_axis", "X1-Axis", _taskRunner, _X1Motor);
-        WebFunctionGroupAxis _x2AxisGroup = WebFunctionGroupAxis("x2_axis", "X2-Axis", _taskRunner, _X2Motor);
+        WebFunctionGroupAxis _xAxisGroup = WebFunctionGroupAxis("x_axis", "X-Axis", _taskRunner, _XMotor, _manualHome, _knob_encoder, barrier_config);
 
-        WebFunctionGroup* _groups[2] = {&_x1AxisGroup, &_x2AxisGroup };
+        WebFunctionGroup* _groups[1] = {&_xAxisGroup };
         uint16_t _groupsCount = sizeof(_groups) / sizeof(WebFunctionGroup*);
 
     public:
-        WebFunctions(IMotorHoming& X1Motor, IMotorHoming& X2Motor)
-            : _X1Motor(X1Motor), _X2Motor(X2Motor) {}
+        WebFunctions(GantryMotor& xMotor, ManualHome& manualHome, UnitEncoder& knob_encoder, const barrier_config_t& barrier_config)
+            : _XMotor(xMotor), _manualHome(manualHome), _knob_encoder(knob_encoder), barrier_config(barrier_config) {}
 
         WebFunctionGroup* getGroup(const char* name);
 

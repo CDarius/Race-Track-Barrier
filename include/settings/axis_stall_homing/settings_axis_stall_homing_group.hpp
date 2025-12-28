@@ -4,7 +4,6 @@
 #include "setting_axisstallhoming_dutylimit.hpp"
 #include "setting_axisstallhoming_minimumtravel.hpp"
 #include "setting_axisstallhoming_homesobstaclepos.hpp"
-#include "setting_axisstallhoming_skew_compensation.hpp"
 #include "motor_control\motorwithstallreference.hpp"
 
 class SettingsAxisStallHomingGroup : public SettingsGroup {
@@ -17,9 +16,8 @@ class SettingsAxisStallHomingGroup : public SettingsGroup {
         AxisStallHomingDutyLimitSetting _dutyLimit = AxisStallHomingDutyLimitSetting(*_motor.config());
         AxisStallHomingMinimumTravelSetting _minimumTravel = AxisStallHomingMinimumTravelSetting(*_motor.config());
         AxisStallHomingHomeObstaclePosSetting _homeObstaclePos = AxisStallHomingHomeObstaclePosSetting(*_motor.config());
-        AxisStallHomingHomeSkewCompensationSetting _skewCompensation = AxisStallHomingHomeSkewCompensationSetting(reinterpret_cast<gantry_stall_homing_config_t&>(*_motor.config()));
 
-        ISetting* _settings[5] = {&_speed, &_dutyLimit, &_minimumTravel, &_homeObstaclePos, &_skewCompensation};
+        ISetting* _settings[5] = {&_speed, &_dutyLimit, &_minimumTravel, &_homeObstaclePos};
 
     public:
         SettingsAxisStallHomingGroup(const char* name, const char* description, MotorWithStallReference& motor);
