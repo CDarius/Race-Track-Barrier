@@ -25,8 +25,12 @@
 #include "web_functions/web_functions.hpp"
 
 barrier_config_t barrier_config = {
-    .manual_homing_speed = 100.0f,
-    .jog_multiplier = 5.0f
+    .manual_homing_speed = 100.0f, // deg/s
+    .jog_multiplier = 5.0f,
+    .barrier_lower_speed = 1000.0f, // deg/s
+    .barrier_raise_speed = 400.0f, // deg/s
+    .barrier_raise_power = 70, // % of max power
+    .barrier_hold_time = 20 // seconds
 };
 
 ApiRestServer server;
