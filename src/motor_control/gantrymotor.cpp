@@ -65,7 +65,7 @@ void GantryMotor::update() {
         // Apply a feedforward target to motor 2 based on motor 1 position and speed
         float speed1 = _motor1.speed();
         float angle1 = _motor1.angle();
-        float angle2 = angle1 + (speed1 * (float)PBIO_CONFIG_SERVO_PERIOD_MS / 1000.0f);
+        float angle2 = angle1 + (speed1 * (float)PBIO_CONFIG_SERVO_PERIOD_MS / 1000.0f / 2.0f); // Apply half the speed as feedforward
         angle2 += _skew_pos_compensation;
         _motor2.track_target(angle2);
     }

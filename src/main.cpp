@@ -205,6 +205,38 @@ void setup() {
 }
 
 void loop() {
+    // Wait for the start button to be released
+    while (START_BUTTON_PRESSED)
+        delay(50);
 
-    delay(300);
+    // Raise the barrier
+    start_button_led.setPixelColor(0, RGB_COLOR_YELLOW);
+    start_button_led.show();
+    x_motor.set_actuation_limit(barrier_config.barrier_raise_power);
+    x_motor.run_target(barrier_config.barrier_raise_speed, x_motor.getSwLimitPlus(), PBIO_ACTUATION_HOLD, true);
+    x_motor.set_actuation_limit(100);
+
+    // Indicate readiness by setting the start button LED to green
+    start_button_led.setPixelColor(0, RGB_COLOR_GREEN);
+    start_button_led.show();
+
+    // Wait for the start button to be clicked
+    while (!START_BUTTON_PRESSED)
+        delay(50);
+
+    // Start lowering the barrier
+    start_button_led.setPixelColor(0, RGB_COLOR_RED);
+    start_button_led.show();
+    x_motor.run_target(barrier_config.barrier_lower_speed, x_motor.getSwLimitMinus(), PBIO_ACTUATION_HOLD, true);
+
+    // Wait with the barrier lowered
+    bool led = true;
+    uint32_t raise_time = millis() + (barrier_config.barrier_hold_time * 1000);
+    while (millis() < raise_time) {
+        // Blink the start button LED
+        led = !led;
+        start_button_led.setPixelColor(0, led ? RGB_COLOR_RED : RGB_COLOR_BLACK);
+        start_button_led.show();
+        delay(300);
+    }
 }

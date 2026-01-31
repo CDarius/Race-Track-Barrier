@@ -88,6 +88,16 @@ class GantryMotor {
             _motor1.track_target(target_angle);
         }
 
+        /**
+        Set actuation limit in percentage
+
+        :param actuation: Maximum actuation percentage (0 to 100%)
+        */
+        void set_actuation_limit(uint8_t actuation) {
+            _motor1.set_actuation_limit(actuation);
+            _motor2.set_actuation_limit(actuation);
+        }
+
         void get_target_tolerances(float *speed, float *position) const {
             _motor1.get_target_tolerances(speed, position);
         }
