@@ -1,4 +1,5 @@
 #include "motor_control/gantrymotor.hpp"
+#include "motor_control/servo.hpp"
 
 void GantryMotor::begin(const char* name) {
     _name = name;
@@ -75,4 +76,14 @@ void GantryMotor::update() {
     }
 
     _motor2.update();
+
+    PBIOLogger* logger = get_logger();
+    if (logger && logger->is_active()) {
+        int32_t count_now = _motor2.motor_count();
+        int32_t rate_now = _motor2.motor_speed();
+        logger->patch([&](int32_t* row) {
+            row[10] = count_now;
+            row[11] = rate_now;
+        });
+    }
 }

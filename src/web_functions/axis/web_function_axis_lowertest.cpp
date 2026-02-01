@@ -1,39 +1,41 @@
-#include "web_functions/axis/web_function_axis_stepresponse.hpp"
+#include "web_functions/axis/web_function_axis_lowertest.hpp"
 
-const char* WebFunctionAxisStepResponse::getName() const {
-    return "axis_stepresponse";
+const char* WebFunctionAxisLowerTest::getName() const {
+    return "axis_lowertest";
 }
 
-const char* WebFunctionAxisStepResponse::getTitle() const {
-    return "Axis Step Response";
+const char* WebFunctionAxisLowerTest::getTitle() const {
+    return "Axis Lower Test";
 }
 
-const char* WebFunctionAxisStepResponse::getDescription() const {
-    return "Give a step command to the axis and log the response";
+const char* WebFunctionAxisLowerTest::getDescription() const {
+    return "Lower the axis and log the response";
 }
 
-uint16_t WebFunctionAxisStepResponse::getPrerequisitesCount() const {
-    // No prerequisites
-    return 0;
+uint16_t WebFunctionAxisLowerTest::getPrerequisitesCount() const {
+    return 1;
 }
 
-const char* WebFunctionAxisStepResponse::getPrerequisiteDescription(uint16_t index) const {
-    // No prerequisites
-    return nullptr;
+const char* WebFunctionAxisLowerTest::getPrerequisiteDescription(uint16_t index) const {
+    switch (index)
+    {
+    case 0: return "Axis must be homed";    
+    default: return nullptr;
+    }
 }
 
-void WebFunctionAxisStepResponse::arePrerequisitesMet(bool* results) const {
-    // No prerequisites
+void WebFunctionAxisLowerTest::arePrerequisitesMet(bool* results) const {
+    results[0] = _axis.referenced();
 }
 
-WebFunctionExecutionStatus WebFunctionAxisStepResponse::start() {
+WebFunctionExecutionStatus WebFunctionAxisLowerTest::start() {
     WebFunction::start(); // Call the base class start to initialize failure description and IO board
 
     _status = WebFunctionExecutionStatus::InProgress;
 
     // Start the axis step log asynchronously
     _taskRunner.runAsync([](void* context) {
-        WebFunctionAxisStepResponse* self = static_cast<WebFunctionAxisStepResponse*>(context);
+        WebFunctionAxisLowerTest* self = static_cast<WebFunctionAxisLowerTest*>(context);
 
         // Create a cancel token for this operation
         CancelToken cancel_token;
@@ -57,7 +59,7 @@ WebFunctionExecutionStatus WebFunctionAxisStepResponse::start() {
         });
 
         if (err != PBIO_SUCCESS) {
-            Logger::instance().logE("Error during step 1 " + String(self->_axis.name()) + "-axis step response: " + String(pbio_error_str(err)));
+            Logger::instance().logE("Error during step 1 " + String(self->_axis.name()) + "-axis lower test: " + String(pbio_error_str(err)));
             self->_failureDescription = "Failed to reach start position (sw limit +)";
             self->_status = WebFunctionExecutionStatus::Failed;
             self->_cancelToken = nullptr;
@@ -72,8 +74,13 @@ WebFunctionExecutionStatus WebFunctionAxisStepResponse::start() {
         // Start axis log and give a step move command towards plus sw limit
         self->_axis.get_logger()->start(RUN_STEP_RESPONSE_LOG_DURATION_MS, 1);
         delay(100); // Wait a bit to ensure the logger is started
-        float target_position = sw_limit_minus + 10.0; // Stop 10 degrees before the end of the travel
-        self->_axis.track_target(target_position);
+        float target_position = sw_limit_minus;
+        self->_axis.run_target(
+            self->_axis.get_speed_limit(),
+            target_position,
+            PBIO_ACTUATION_HOLD,
+            false,
+            &cancel_token);
         
         // Wait for the axis to reach the target position
         float axis_speed_tolerance, axis_position_tolerance;
@@ -114,7 +121,7 @@ WebFunctionExecutionStatus WebFunctionAxisStepResponse::start() {
     return _status;
 }
 
-void WebFunctionAxisStepResponse::stop() {
+void WebFunctionAxisLowerTest::stop() {
     if (_cancelToken) {
         _cancelToken->cancel();
     }

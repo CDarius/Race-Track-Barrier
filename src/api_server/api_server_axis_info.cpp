@@ -7,11 +7,10 @@ void ApiRestServer::setupAxisInfoController() {
         // Prepare JSON response
         JsonDocument doc;
         JsonArray jAxes = doc.to<JsonArray>();
-        for(uint8_t i = 0; i < 2; i++) {
-            Motor* motor = nullptr;
+        for(uint8_t i = 0; i < 1; i++) {
+            GantryMotor* motor = nullptr;
             switch(i) {
-                case 0: motor = _X1Motor; break;
-                case 1: motor = _X2Motor; break;
+                case 0: motor = _XMotor; break;
             }
             if (motor) {
                 float axis_speed_tolerance, axis_position_tolerance;

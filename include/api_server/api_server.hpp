@@ -8,6 +8,7 @@
 #include "settings/setting.hpp"
 #include "web_functions/web_functions.hpp"
 #include "motor_control/motor.hpp"
+#include "motor_control/gantrymotor.hpp"
 
 class ApiRestServer {
     private:
@@ -17,7 +18,7 @@ class ApiRestServer {
         WebFunctions* _webFunctions;
         Motor* _X1Motor;
         Motor* _X2Motor;
-
+        GantryMotor* _XMotor;
 
         String uriParam(const String& uri, uint8_t position);
         void setupSettingController();
@@ -25,8 +26,8 @@ class ApiRestServer {
         void setupAxisLogController();
         void setupAxisInfoController();
 
-        Motor* getMotorByName(const char* name);
+        PBIOLogger* getMotorLoggerByName(const char* name);
 
     public:
-        void begin(Settings* settings, WebFunctions* webFunctions, Motor* x1Motor, Motor* x2Motor);
+        void begin(Settings* settings, WebFunctions* webFunctions, Motor* x1Motor, Motor* x2Motor, GantryMotor* xMotor);
 };

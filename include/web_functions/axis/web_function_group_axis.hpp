@@ -3,6 +3,7 @@
 #include "web_functions/web_function_group.hpp"
 #include "web_functions/axis/web_function_axis_homing.hpp"
 #include "web_functions/axis/web_function_axis_jog.hpp"
+#include "web_functions/axis/web_function_axis_lowertest.hpp"
 #include "web_functions/axis/web_function_axis_stepresponse.hpp"
 #include "motor_control/gantrymotor.hpp"
 #include "manual_home.hpp"
@@ -20,8 +21,9 @@ class WebFunctionGroupAxis : public WebFunctionGroup {
         WebFunctionAxisHoming _homing = WebFunctionAxisHoming(_motor, _manualHome, _taskRunner);
         WebFunctionAxisJog _jog = WebFunctionAxisJog(_motor, _knob_encoder, barrier_config, _taskRunner);
         WebFunctionAxisStepResponse _stepResponse = WebFunctionAxisStepResponse(_motor, _taskRunner);
+        WebFunctionAxisLowerTest _lowerTest = WebFunctionAxisLowerTest(_motor, _taskRunner);
 
-        WebFunction* _functions[3] = { &_homing, &_jog, &_stepResponse};
+        WebFunction* _functions[4] = { &_homing, &_jog, &_stepResponse, &_lowerTest};
 
     public:
         WebFunctionGroupAxis(const char* name, const char* title, TaskRunner& taskRunner, 

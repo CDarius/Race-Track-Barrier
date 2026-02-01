@@ -31,11 +31,12 @@ String ApiRestServer::uriParam(const String& uri, uint8_t position) {
     return ""; // Return empty string if position is out of bounds
 }
 
-void ApiRestServer::begin(Settings* settings, WebFunctions* webFunctions, Motor* x1Motor, Motor* x2Motor) {
+void ApiRestServer::begin(Settings* settings, WebFunctions* webFunctions, Motor* x1Motor, Motor* x2Motor, GantryMotor* xMotor) {
     _settings = settings;
     _webFunctions = webFunctions;
     _X1Motor = x1Motor;
     _X2Motor = x2Motor;
+    _XMotor = xMotor;
 
     // Confifure logging to Serial
     #ifdef ENABLE_API_SERVER_LOGGING
@@ -77,11 +78,13 @@ void ApiRestServer::begin(Settings* settings, WebFunctions* webFunctions, Motor*
     _server.begin();
 }
 
-Motor* ApiRestServer::getMotorByName(const char* name) {
+PBIOLogger* ApiRestServer::getMotorLoggerByName(const char* name) {
     if (strcmp(name, "X1") == 0)
-        return this->_X1Motor;
+        return this->_X1Motor->get_logger();
     else if (strcmp(name, "X2") == 0)
-        return this->_X2Motor;
+        return this->_X2Motor->get_logger();
+    else if (strcmp(name, "X") == 0)
+        return this->_XMotor->get_logger();
     else
         return nullptr;
 }

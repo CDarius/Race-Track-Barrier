@@ -10,8 +10,8 @@ void ApiRestServer::setupAxisLogController() {
 
         // Validate mandatory "axis" parameter
         axis.toUpperCase();
-        Motor* motor = getMotorByName(axis.c_str());
-        if (!motor)
+        PBIOLogger* logger = getMotorLoggerByName(axis.c_str());
+        if (!logger)
             return response->send(400);
         
         // Get optional parameters
@@ -30,7 +30,7 @@ void ApiRestServer::setupAxisLogController() {
         }
 
         // Start the log
-        pbio_error_t err = motor->get_logger()->start(duration, div);
+        pbio_error_t err = logger->start(duration, div);
         if (err != PBIO_SUCCESS)
             return response->send(500);
 
@@ -46,11 +46,11 @@ void ApiRestServer::setupAxisLogController() {
 
         // Validate mandatory "axis" parameter
         axis.toUpperCase();
-        Motor* motor = getMotorByName(axis.c_str());
-        if (!motor)
+        PBIOLogger* logger = getMotorLoggerByName(axis.c_str());
+        if (!logger)
             return response->send(400);
 
-        motor->get_logger()->stop();
+        logger->stop();
         return response->send(200);
     });
 
@@ -63,12 +63,12 @@ void ApiRestServer::setupAxisLogController() {
 
         // Validate mandatory "axis" parameter
         axis.toUpperCase();
-        Motor* motor = getMotorByName(axis.c_str());
-        if (!motor)
+        PBIOLogger* logger = getMotorLoggerByName(axis.c_str());
+        if (!logger)
             return response->send(400);
 
-        int32_t rows = motor->get_logger()->rows();
-        int32_t cols = motor->get_logger()->cols();
+        int32_t rows = logger->rows();
+        int32_t cols = logger->cols();
 
         if (rows == 0 || cols == 0)
             return response->send(204); // No content
@@ -87,7 +87,7 @@ void ApiRestServer::setupAxisLogController() {
         // Write column names
         response2.print(",\"col_names\":[");
         for (uint32_t c = 0; c < cols; c++) {
-            const char* col_name = motor->get_logger()->col_name(c);
+            const char* col_name = logger->col_name(c);
             if (col_name) {
                 response2.print("\"");
                 response2.print(col_name);
@@ -106,7 +106,7 @@ void ApiRestServer::setupAxisLogController() {
         // Write column units
         response2.print(",\"col_units\":[");
         for (uint32_t c = 0; c < cols; c++) {
-            const char* col_unit = motor->get_logger()->col_unit(c);
+            const char* col_unit = logger->col_unit(c);
             if (col_unit) {
                 response2.print("\"");
                 response2.print(col_unit);
@@ -128,7 +128,7 @@ void ApiRestServer::setupAxisLogController() {
         int8_t yield_counter = 0;
         for (uint32_t r = 0; r < rows; r++) {
             // Get a log row
-            pbio_error_t result = motor->get_logger()->read(r, row_buffer);
+            pbio_error_t result = logger->read(r, row_buffer);
             if (result != PBIO_SUCCESS) {
                 response2.endSend();
                 return response->send(500);
@@ -167,14 +167,14 @@ void ApiRestServer::setupAxisLogController() {
 
         // Validate mandatory "axis" parameter
         axis.toUpperCase();
-        Motor* motor = getMotorByName(axis.c_str());
-        if (!motor)
+        PBIOLogger* logger = getMotorLoggerByName(axis.c_str());
+        if (!logger)
             return response->send(400);
         
         // Prepare the answer
         JsonDocument doc;
         doc["axis"] = axis;
-        doc["running"] = motor->get_logger()->is_active();
+        doc["running"] = logger->is_active();
 
         String jsonResponse;
         serializeJson(doc, jsonResponse);

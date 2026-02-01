@@ -46,6 +46,16 @@ void Motor::reset_angle(float angle){
 }
 
 /**
+ * @brief Gets the motor count
+ * 
+ * @return float 
+ */
+float Motor::motor_count() const {
+    return _tacho.getCount();
+}
+
+
+/**
 Gets the speed of the motor in deg/s
 */
 float Motor::speed() const {

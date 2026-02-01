@@ -18,7 +18,9 @@ PBIOLogger::PBIOLogger() {
         (char *)"Position setpoint",
         (char *)"Speed setpoint",
         (char *)"Error: position for angle maneuver or else speed",
-        (char *)"Accumulated position error"
+        (char *)"Accumulated position error",
+        (char *)"Current position motor 2",
+        (char *)"Current speed motor 2"
     };
     _col_names = servo_col_names;
     static char *servo_col_units[] {
@@ -30,7 +32,9 @@ PBIOLogger::PBIOLogger() {
         (char *)"count",
         (char *)"count/s",
         (char *)"count or count/s",
-        (char *)"count"
+        (char *)"count",
+        (char *)"count",
+        (char *)"count/s"
     };
     _col_units = servo_col_units;
 }
@@ -273,4 +277,10 @@ bool PBIOLogger::is_active() {
         xSemaphoreGive(_xMutex);
     }
     return active;
+}
+
+// Helper to get pointer to last logged item
+int32_t* PBIOLogger::last_log_ptr() {
+    if (_sampled == 0 || !_data) return nullptr;
+    return &_data[(_sampled - 1) * PBIO_NUM_LOGGER_COLS];
 }

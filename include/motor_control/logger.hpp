@@ -34,6 +34,8 @@ class PBIOLogger {
         SemaphoreHandle_t _xMutex = xSemaphoreCreateMutex();
 
         void delete_log();
+        // Helper to get pointer to last logged item
+        int32_t* last_log_ptr();
     public:
         PBIOLogger();
 
@@ -49,4 +51,16 @@ class PBIOLogger {
         uint32_t cols();
         const char* col_name(uint8_t col);
         const char* col_unit(uint8_t col);
+
+        // Patch the last logged item using a lambda
+        template<typename F>
+        void patch(F patch_fn) {
+            if (xSemaphoreTake(_xMutex, portMAX_DELAY)) {
+                int32_t* last = last_log_ptr();
+                if (last) {
+                    patch_fn(last);
+                }
+                xSemaphoreGive(_xMutex);
+            }
+        }
 };

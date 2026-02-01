@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include "motor.hpp"
+#include "motor_control/logger.hpp"
 
 class GantryMotor {
     private:
@@ -114,5 +115,22 @@ class GantryMotor {
             return _motor1.getSwLimitPlus();
         }
 
+        // New functions for axis info
+        float get_counts_per_unit() const {
+            return _motor1.get_counts_per_unit();
+        }
+
+        float get_acceleration_limit() const {
+            return _motor1.get_acceleration_limit();
+        }
+
+        float get_actuation_limit() const {
+            return _motor1.get_actuation_limit();
+        }
+
         void update();
+        
+        PBIOLogger* get_logger() {
+            return _motor1.get_logger();
+        }
 };

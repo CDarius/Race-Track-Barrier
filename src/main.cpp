@@ -187,7 +187,7 @@ void setup() {
         // Start the web server
         server.begin(
             &game_settings, &web_functions, 
-            &x1_motor, &x2_motor);
+            &x1_motor, &x2_motor, &x_motor);
     }
 
     // Service mode infinite loop to prevent normal operation
